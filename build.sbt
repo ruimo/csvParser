@@ -1,5 +1,7 @@
 name := """csvParser"""
 
+organization := "com.ruimo"
+
 version := "1.0-SNAPSHOT"
 
 crossScalaVersions := List("2.10.4", "2.11.2") 
