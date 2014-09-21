@@ -6,6 +6,8 @@ version := "1.0-SNAPSHOT"
 
 crossScalaVersions := List("2.10.4", "2.11.2") 
 
+resolvers += "ruimo.com" at "http://www.ruimo.com/release"
+
 publishTo := Some(
   Resolver.file(
     "recoengcommon",
@@ -20,7 +22,8 @@ publishTo := Some(
 //libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.3"
 
 libraryDependencies ++= Seq(
-  "org.specs2" %% "specs2" % "2.4.3" % "test"
+  "org.specs2" %% "specs2" % "2.4.3" % "test",
+  "com.ruimo" %% "scoins" % "1.0-SNAPSHOT"
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")
