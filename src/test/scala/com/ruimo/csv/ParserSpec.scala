@@ -209,5 +209,97 @@ class ParserSpec extends Specification {
       t.get
       t.isSuccess === true
     }
+
+    "parse with header when empty" in {
+      import com.ruimo.csv.Parser._
+
+      asHeaderedCsv(Iterator.empty).hasNext === false
+    }
+
+    "parse with header when error" in {
+      import com.ruimo.csv.Parser._
+
+      val it = asHeaderedCsv(Iterator.single(Failure(new Exception("Error"))))
+      it.hasNext === true
+      it.next() match {
+        case Success(_) => failure
+        case Failure(e) => e.getMessage === "Error"
+      }
+      1 === 1
+    }
+
+    "parse csv having only header" in {
+      import com.ruimo.csv.Parser._
+
+      val it = asHeaderedCsv(Iterator.single(Success(Seq("Hello", "World"))))
+      it.hasNext === false
+    }
+
+    "parse csv read error" in {
+      import com.ruimo.csv.Parser._
+
+      val it = asHeaderedCsv(Iterator(
+        Success(Seq("Hello", "World")),
+        Failure(new Exception("Error"))
+      ))
+      it.hasNext === true
+      it.next() match {
+        case Success(_) => failure
+        case Failure(e) => e.getMessage === "Error"
+      }
+      1 === 1
+    }
+
+    "parse csv having two lines" in {
+      import com.ruimo.csv.Parser._
+
+      val it = asHeaderedCsv(Iterator(
+        Success(Seq("Name", "Age")),
+        Success(Seq("Ruimo", "18")),
+        Success(Seq("Uno", "16"))
+      ))
+      it.hasNext === true
+      doWith(it.next().get) { l =>
+        l.lineNo === 2
+        l.header.header.size === 2
+        l('Name) === "Ruimo"
+        l('Age) === "18"
+      }
+
+      it.hasNext === true
+      doWith(it.next().get) { l =>
+        l.lineNo === 3
+        l.header.header.size === 2
+        l('Name) === "Uno"
+        l('Age) === "16"
+      }
+
+      it.hasNext === false
+    }
+
+    "parse csv having header line is ok and second line is ng" in {
+      import com.ruimo.csv.Parser._
+
+      val it = asHeaderedCsv(Iterator(
+        Success(Seq("Name", "Age")),
+        Success(Seq("Ruimo", "18")),
+        Failure(new Exception("Error"))
+      ))
+      it.hasNext === true
+      doWith(it.next().get) { l =>
+        l.lineNo === 2
+        l.header.header.size === 2
+        l('Name) === "Ruimo"
+        l('Age) === "18"
+      }
+
+      it.hasNext === true
+      it.next() match {
+        case Success(_) => failure
+        case Failure(e) => e.getMessage === "Error"
+      }
+
+      it.hasNext === false
+    }
   }
 }

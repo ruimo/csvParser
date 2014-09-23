@@ -92,4 +92,35 @@ object Parser {
   else {
     Iterator.empty
   }
+
+  def asHeaderedCsv(in: Iterator[Try[Seq[String]]]): Iterator[Try[CsvRecord]] = {
+    if (! in.hasNext) Iterator.empty
+    else {
+      in.next.map {colSeq => CsvHeader.fromSeq(colSeq)} match {
+        case Failure(e) => Iterator.single(Failure[CsvRecord](e))
+        case Success(header) => new Iterator[Try[CsvRecord]] {
+          private var rec: Option[Try[CsvRecord]] = None
+          private var lineNo = 2
+
+          override def hasNext: Boolean = {
+            if (! rec.isDefined && in.hasNext) {
+              rec = Some(in.next.map {cols => CsvRecord(lineNo, header, cols.toVector)})
+              lineNo += 1
+            }
+            rec.isDefined
+          }
+
+          override def next(): Try[CsvRecord] = if (hasNext) {
+            try {
+              rec.get
+            }
+            finally {
+              rec = None
+            }
+          }
+          else throw new NoSuchElementException
+        }
+      }
+    }
+  }
 }
