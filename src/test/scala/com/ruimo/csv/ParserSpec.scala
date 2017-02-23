@@ -32,6 +32,14 @@ class ParserSpec extends Specification {
       cols(2) === "c"
     }
 
+    "parse tab separated columns" in {
+      val cols = Parser.parseOneLine("\"a b\"\"c\"\tb\t\"c\"", '\t').get
+      cols.size === 3
+      cols(0) === "a b\"c"
+      cols(1) === "b"
+      cols(2) === "c"
+    }
+
     "tailing quote" in {
       Parser.parseOneLine("\"a b\"\"").get must throwA[CsvParseException]
     }
@@ -42,6 +50,16 @@ class ParserSpec extends Specification {
 
     "parse one line" in {
       val z: Iterator[Try[Seq[String]]] = Parser.parseLines("abc,def".toIterator)
+      z.hasNext === true
+      val cols: Seq[String] = z.next.get
+      cols.size === 2
+      cols(0) === "abc"
+      cols(1) === "def"
+      z.hasNext === false
+    }
+
+    "parse one line with tab separated" in {
+      val z: Iterator[Try[Seq[String]]] = Parser.parseLines("abc\tdef".toIterator, '\t')
       z.hasNext === true
       val cols: Seq[String] = z.next.get
       cols.size === 2
