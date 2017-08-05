@@ -2,7 +2,7 @@ name := """csvParser"""
 
 organization := "com.ruimo"
 
-crossScalaVersions := List("2.10.4", "2.11.7") 
+crossScalaVersions := List("2.11.7", "2.12.3") 
 
 resolvers += "ruimo.com" at "http://static.ruimo.com/release"
 
@@ -14,8 +14,8 @@ publishTo := Some(
 )
 
 libraryDependencies ++= Seq(
-  "org.specs2" %% "specs2" % "2.4.3" % "test",
-  "com.ruimo" %% "scoins" % "1.5"
+  "org.specs2" %% "specs2-core" % "3.9.1" % "test",
+  "com.ruimo" %% "scoins" % "1.12"
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")
