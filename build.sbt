@@ -2,7 +2,9 @@ name := """csvParser"""
 
 organization := "com.ruimo"
 
-crossScalaVersions := List("2.11.7", "2.12.3") 
+scalaVersion := "2.12.3"
+
+crossScalaVersions := List("2.11.8", "2.12.3") 
 
 resolvers += "ruimo.com" at "http://static.ruimo.com/release"
 
