@@ -6,4 +6,6 @@
 /target/
 *.iml
 *~
-.*
+.bsp/
+.idea/
+.metals/
